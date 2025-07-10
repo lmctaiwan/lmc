@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打地鼠遊戲</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .stat-item {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .hole {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #8B4513 0%, #654321 100%);
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                inset 0 10px 20px rgba(0,0,0,0.3),
+                0 4px 8px rgba(0,0,0,0.2);
+            border: 5px solid #A0522D;
+        }
+
+        .hole:hover {
+            transform: scale(1.05);
+        }
+
+        .mole {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #8B4513 0%, #654321 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border: 3px solid #A0522D;
+        }
+
+        .mole::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 15px;
+            height: 15px;
+            background: #000;
+            border-radius: 50%;
+            box-shadow: 25px 0 0 #000;
+        }
+
+        .mole::after {
+            content: '';
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .mole.show {
+            transform: translate(-50%, -50%) scale(1);
+            animation: pop 0.3s ease;
+        }
+
+        .mole.hit {
+            background: #ff6b6b;
+            animation: hit 0.3s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        @keyframes hit {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); background: #ff6b6b; }
+            100% { transform: translate(-50%, -50%) scale(0); }
+        }
+
+        .controls {
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.reset {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+
+        .game-over {
+            text-align: center;
+            font-size: 1.5em;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .high-score {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.1em;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hole {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .mole {
+                width: 70px;
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">🔨 打地鼠遊戲</h1>
+        </div>
+        
+        <div class="game-stats">
+            <div class="stat-item">
+                <div>分數</div>
+                <div id="score">0</div>
+            </div>
+            <div class="stat-item">
+                <div>時間</div>
+                <div id="timer">30</div>
+            </div>
+            <div class="stat-item">
+                <div>連擊</div>
+                <div id="combo">0</div>
+            </div>
+        </div>
+
+        <div class="game-board" id="gameBoard">
+            <div class="hole" data-hole="0">
+                <div class="mole" data-mole="0"></div>
+            </div>
+            <div class="hole" data-hole="1">
+                <div class="mole" data-mole="1"></div>
+            </div>
+            <div class="hole" data-hole="2">
+                <div class="mole" data-mole="2"></div>
+            </div>
+            <div class="hole" data-hole="3">
+                <div class="mole" data-mole="3"></div>
+            </div>
+            <div class="hole" data-hole="4">
+                <div class="mole" data-mole="4"></div>
+            </div>
+            <div class="hole" data-hole="5">
+                <div class="mole" data-mole="5"></div>
+            </div>
+            <div class="hole" data-hole="6">
+                <div class="mole" data-mole="6"></div>
+            </div>
+            <div class="hole" data-hole="7">
+                <div class="mole" data-mole="7"></div>
+            </div>
+            <div class="hole" data-hole="8">
+                <div class="mole" data-mole="8"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="startBtn">開始遊戲</button>
+            <button class="btn reset" id="resetBtn">重新開始</button>
+        </div>
+
+        <div id="gameOver" class="game-over" style="display: none;">
+            遊戲結束！最終分數：<span id="finalScore">0</span>
+        </div>
+
+        <div id="highScore" class="high-score">
+            最高分數：<span id="highScoreValue">0</span>
+        </div>
+    </div>
+
+    <script>
+        class WhackAMoleGame {
+            constructor() {
+                this.score = 0;
+                this.timeLeft = 30;
+                this.combo = 0;
+                this.isPlaying = false;
+                this.gameTimer = null;
+                this.moleTimer = null;
+                this.activeMoles = new Set();
+                this.highScore = localStorage.getItem('whackAMoleHighScore') || 0;
+                
+                this.initializeGame();
+            }
+
+            initializeGame() {
+                this.updateDisplay();
+                this.updateHighScore();
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                document.getElementById('startBtn').addEventListener('click', () => this.startGame());
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+                
+                // 為每個地鼠添加點擊事件
+                document.querySelectorAll('.mole').forEach(mole => {
+                    mole.addEventListener('click', (e) => this.hitMole(e));
+                });
+            }
+
+            startGame() {
+                if (this.isPlaying) return;
+                
+                this.isPlaying = true;
+                this.score = 0;
+                this.timeLeft = 30;
+                this.combo = 0;
+                this.activeMoles.clear();
+                
+                document.getElementById('gameOver').style.display = 'none';
+                document.getElementById('startBtn').textContent = '遊戲中...';
+                document.getElementById('startBtn').disabled = true;
+                
+                this.updateDisplay();
+                this.startTimer();
+                this.spawnMoles();
+            }
+
+            startTimer() {
+                this.gameTimer = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateDisplay();
+                    
+                    if (this.timeLeft <= 0) {
+                        this.endGame();
+                    }
+                }, 1000);
+            }
+
+            spawnMoles() {
+                if (!this.isPlaying) return;
+                
+                const randomHole = Math.floor(Math.random() * 9);
+                const mole = document.querySelector(`[data-mole="${randomHole}"]`);
+                
+                if (!this.activeMoles.has(randomHole)) {
+                    this.showMole(mole, randomHole);
+                }
+                
+                // 隨機間隔時間生成地鼠
+                const nextSpawn = Math.random() * 1000 + 500; // 500-1500ms
+                this.moleTimer = setTimeout(() => this.spawnMoles(), nextSpawn);
+            }
+
+            showMole(mole, holeIndex) {
+                mole.classList.add('show');
+                this.activeMoles.add(holeIndex);
+                
+                // 地鼠顯示時間
+                const showTime = Math.random() * 1000 + 1000; // 1-2秒
+                setTimeout(() => {
+                    if (this.activeMoles.has(holeIndex)) {
+                        this.hideMole(mole, holeIndex);
+                    }
+                }, showTime);
+            }
+
+            hideMole(mole, holeIndex) {
+                mole.classList.remove('show');
+                this.activeMoles.delete(holeIndex);
+                this.combo = 0; // 沒打中就重置連擊
+                this.updateDisplay();
+            }
+
+            hitMole(event) {
+                if (!this.isPlaying) return;
+                
+                const mole = event.target;
+                const holeIndex = parseInt(mole.dataset.mole);
+                
+                if (this.activeMoles.has(holeIndex)) {
+                    mole.classList.add('hit');
+                    mole.classList.remove('show');
+                    this.activeMoles.delete(holeIndex);
+                    
+                    this.combo++;
+                    const points = this.combo > 1 ? 10 + (this.combo - 1) * 5 : 10;
+                    this.score += points;
+                    
+                    this.updateDisplay();
+                    this.playHitSound();
+                    
+                    // 重置動畫
+                    setTimeout(() => {
+                        mole.classList.remove('hit');
+                    }, 300);
+                }
+            }
+
+            playHitSound() {
+                // 創建音效（使用 Web Audio API）
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            }
+
+            endGame() {
+                this.isPlaying = false;
+                clearInterval(this.gameTimer);
+                clearTimeout(this.moleTimer);
+                
+                // 隱藏所有地鼠
+                document.querySelectorAll('.mole').forEach(mole => {
+                    mole.classList.remove('show');
+                });
+                this.activeMoles.clear();
+                
+                // 更新最高分
+                if (this.score > this.highScore) {
+                    this.highScore = this.score;
+                    localStorage.setItem('whackAMoleHighScore', this.highScore);
+                    this.updateHighScore();
+                }
+                
+                document.getElementById('finalScore').textContent = this.score;
+                document.getElementById('gameOver').style.display = 'block';
+                document.getElementById('startBtn').textContent = '開始遊戲';
+                document.getElementById('startBtn').disabled = false;
+            }
+
+            resetGame() {
+                this.isPlaying = false;
+                clearInterval(this.gameTimer);
+                clearTimeout(this.moleTimer);
+                
+                this.score = 0;
+                this.timeLeft = 30;
+                this.combo = 0;
+                this.activeMoles.clear();
+                
+                document.querySelectorAll('.mole').forEach(mole => {
+                    mole.classList.remove('show', 'hit');
+                });
+                
+                document.getElementById('gameOver').style.display = 'none';
+                document.getElementById('startBtn').textContent = '開始遊戲';
+                document.getElementById('startBtn').disabled = false;
+                
+                this.updateDisplay();
+            }
+
+            updateDisplay() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('timer').textContent = this.timeLeft;
+                document.getElementById('combo').textContent = this.combo;
+            }
+
+            updateHighScore() {
+                document.getElementById('highScoreValue').textContent = this.highScore;
+            }
+        }
+
+        // 初始化遊戲
+        const game = new WhackAMoleGame();
+    </script>
+</body>
+</html>
