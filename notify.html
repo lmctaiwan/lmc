@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地籍異動即時通服務申請書</title>
+    <style>
+        body {
+            font-family: "微軟正黑體", "Microsoft JhengHei", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .input-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 18px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+        
+        .row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .col {
+            flex: 1;
+        }
+        
+        .buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .print-button {
+            background: #27ae60;
+        }
+        
+        .print-button:hover {
+            background: #229954;
+        }
+        
+        /* 申請書表格樣式 */
+        .form-table {
+            display: none;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 18px;
+            font-family: "標楷體", "DFKai-SB", "BiauKai", serif;
+        }
+        
+        .form-table td, .form-table th {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+            line-height: 1.4;
+        }
+        
+        .form-table .header {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .form-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-family: "標楷體", "DFKai-SB", "BiauKai", serif;
+        }
+        
+        .checkbox {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .signature-line {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            width: 150px;
+            height: 40px;
+            margin-left: 10px;
+            vertical-align: bottom;
+        }
+        
+        .signature-line.large {
+            width: 180px;
+            height: 45px;
+        }
+        
+        .terms-section {
+            margin-top: 20px;
+            font-size: 18px;
+            line-height: 1.6;
+            line-height: 1.3;
+            font-family: "標楷體", "DFKai-SB", "BiauKai", serif;
+        }
+        
+        .terms-section h4 {
+            margin-top: 12px;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+        
+        .terms-section p {
+            margin: 4px 0;
+        }
+        
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0.5in;
+            }
+            
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                font-size: 12px;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: none;
+                margin: 0;
+            }
+            
+            .input-section, .buttons {
+                display: none;
+            }
+            
+            .form-table {
+                display: table !important;
+                page-break-inside: avoid;
+                font-size: 12px;
+                width: 100%;
+                margin-top: 0;
+            }
+            
+            .form-table td, .form-table th {
+                padding: 6px 8px;
+                font-size: 14px;
+                border: 1px solid #000;
+            }
+            
+            .form-table .header {
+                font-size: 14px;
+                background-color: #f0f0f0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .form-title {
+                font-size: 18px;
+                margin-bottom: 15px;
+                page-break-after: avoid;
+            }
+            
+            .signature-line {
+                width: 120px;
+                height: 30px;
+                border-bottom: 1px solid #000;
+            }
+            
+            .signature-line.large {
+                width: 140px;
+                height: 35px;
+            }
+            
+            .terms-section {
+                page-break-inside: avoid;
+                font-size: 14px;
+                line-height: 1.4;
+                line-height: 1.2;
+                margin-top: 15px;
+            }
+            
+            .terms-section h4 {
+                font-size: 11px;
+                margin-top: 8px;
+                margin-bottom: 3px;
+                page-break-after: avoid;
+            }
+            
+            .terms-section p {
+                margin: 2px 0;
+                page-break-inside: avoid;
+            }
+            
+            /* 強制單頁顯示 */
+            .form-table, .terms-section {
+                page-break-inside: avoid;
+            }
+            
+            /* 調整內容間距以適應單頁 */
+            .terms-section {
+                font-size: 9px;
+                line-height: 1.1;
+            }
+            
+            .terms-section h4 {
+                font-size: 14px;
+                margin-top: 6px;
+                margin-bottom: 2px;
+            }
+            
+            .terms-section p {
+                margin: 1px 0;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-title">「地籍異動即時通」服務申請書</div>
+        
+        <div class="input-section">
+            <h3>請輸入申請人資料</h3>
+            <div class="form-group">
+                <label for="name">姓名或名稱：</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="idNumber">統一編號：</label>
+                <input type="text" id="idNumber" name="idNumber" required>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <label for="agentName">法定代理人/被授權人：</label>
+                    <input type="text" id="agentName" name="agentName" placeholder="若無則留空">
+                </div>
+                <div class="col">
+                    <label for="agentIdNumber">法定代理人/被授權人統一編號：</label>
+                    <input type="text" id="agentIdNumber" name="agentIdNumber" placeholder="若無則留空">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <label for="phone1">手機號碼1：</label>
+                    <input type="tel" id="phone1" name="phone1">
+                </div>
+                <div class="col">
+                    <label for="phone2">手機號碼2：</label>
+                    <input type="tel" id="phone2" name="phone2">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <label for="email1">電子郵件1：</label>
+                    <input type="email" id="email1" name="email1">
+                </div>
+                <div class="col">
+                    <label for="email2">電子郵件2：</label>
+                    <input type="email" id="email2" name="email2">
+                </div>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button onclick="generateForm()">生成申請書</button>
+            <button onclick="printForm()" class="print-button">列印申請書</button>
+        </div>
+        
+        <table class="form-table" id="formTable">
+            <tr>
+                <td class="header" style="width: 15%;">受理機關</td>
+                <td colspan="3" style="width: 85%;">臺中市大里地政事務所</td>
+            </tr>
+            <tr>
+                <td class="header">申請日期</td>
+                <td style="width: 25%;" id="applyDate"></td>
+                <td class="header" style="width: 15%;">收文編號</td>
+                <td style="width: 45%;"></td>
+            </tr>
+            <tr>
+                <td class="header">申請類別</td>
+                <td colspan="3">
+                    <span class="checkbox">☑ 新申請</span>
+                    <span class="checkbox">☐ 資料變更</span>
+                    <span class="checkbox">☐ 終止服務</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="header" rowspan="2">申請人資料</td>
+                <td colspan="3">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="border: none; padding: 0; width: 15%;">姓名或名稱：</td>
+                            <td style="border: none; padding: 0; width: 20%;" id="applicantName"></td>
+                            <td style="border: none; padding: 0; width: 15%;">統一編號：</td>
+                            <td style="border: none; padding: 0; width: 20%;" id="applicantIdNumber"></td>
+                            <td style="border: none; padding: 0; width: 30%;">
+                                (簽章)<span class="signature-line large" style="width: 120px; height: 35px; margin-left: 5px;"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="border: none; padding: 0; width: 15%;">法定代理人/被授權人：</td>
+                            <td style="border: none; padding: 0; width: 20%;" id="agentNameOutput"></td>
+                            <td style="border: none; padding: 0; width: 15%;">統一編號：</td>
+                            <td style="border: none; padding: 0; width: 20%;" id="agentIdNumberOutput"></td>
+                            <td style="border: none; padding: 0; width: 30%;">
+                                (簽章)<span class="signature-line large" style="width: 120px; height: 35px; margin-left: 5px;"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="header">不動產所在之登記機關或鄉鎮市區</td>
+                <td colspan="3">臺中市大里地政事務所<br><span style="font-size: 10px;">(請自行填寫)</span></td>
+            </tr>
+            <tr>
+                <td class="header">通知方式<br><span style="font-size: 10px;">(請勾選，可複選)</span></td>
+                <td colspan="3" id="notificationMethod"></td>
+            </tr>
+            <tr>
+                <td class="header">本服務同意條款</td>
+                <td colspan="3">
+                    ☐ 申請人已審閱明白並同意遵守本服務各項規定（詳見下方服務說明及免責聲明）。
+                    <br>請簽章：<span class="signature-line large"></span>
+                </td>
+            </tr>
+        </table>
+        
+        <div class="terms-section" style="display: none;" id="termsSection">
+            <h2>服務說明：</h2>
+            <p>一、本服務限已辦理土地或建物所有權登記之登記名義人，於登記機關轄區範圍內，以登記名義人之統一編號得予以歸戶之土地及建物所有權利，有申請買賣、拍賣、贈與、配偶贈與、信託、書狀補給、抵押權設定、查封、假扣押、判決移轉、調解移轉及和解移轉登記案件，系統自動依申請選擇方式通知（包含「收件」時通知、「異動完成」後通知；義務人或權利人有二人以上，登記案件收件時如僅登錄其中一位為代表，則收件時僅通知該登錄之人）。</p>
+            
+            <p>二、所填寫統一編號僅供本項服務作業使用。臨櫃申請時，申請人應填寫本申請書並檢附身分證明文件正本，驗畢後發還。由法定代理人或被授權人申請者，應另檢附法定代理證明、經相關單位驗證、依法公證或認證之授權證明文件，影本應附案存檔；網路申請者，申請人應以自然人憑證或工商憑證驗證身分，線上填寫申請書。</p>
+            
+            <p>三、申請人可臨櫃向任一地政事務所提出申請。如登記名義人所有之土地或建物分屬不同直轄市、縣(市)之地政事務所管轄時，申請書以同一直轄市、縣(市)為單位分別填寫，並由收受之地政事務所轉送其他管轄直轄市、縣(市)地政事務所受理。</p>
+            
+            <p>四、受理申請之地政事務所處理完成後，會以申請人選擇通知方式通知本服務已生效。</p>
+            
+            <p>五、所填手機號碼或電子郵件信箱如非申請人持有，申請人須自行取得受通知對象之同意，並告知本服務內容與性質，及受通知對象應負轉知訊息予登記名義人之責任。</p>
+            
+            <p>六、申請人於申請本項服務後，若通知方式、資料內容有變更，應再申請資料變更，以利本服務之通知。嗣後申請人如已死亡，地政事務所得逕行終止本服務。</p>
+            
+            <h2>免責聲明：</h2>
+            <p>一、本服務純屬便民措施，運用自動化系統發送登記案件訊息，內容僅供參考，若因系統異常無法順利通知，敬請見諒。本服務不影響登記之法律效力，如有登記案件之相關疑義，請逕洽管轄之地政事務所諮詢。</p>
+            
+            <p>二、本服務之作業程序及項目如有異動，將公布於內政部(地政司)或各直轄市、縣(市)政府地政局(處)網頁，不另行通知。</p>
+            
+            <p>三、本服務如因網路中斷或系統故障等現象，造成申請人使用上的不便、資料喪失、錯誤或其他損失等情形，對於申請人因使用(或無法使用)本服務而造成損害，不負任何賠償責任。</p>
+        </div>
+    </div>
+
+    <script>
+        // 取得民國年份
+        function getROCYear() {
+            const now = new Date();
+            const rocYear = now.getFullYear() - 1911;
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${rocYear}年${month}月${day}日`;
+        }
+
+        function generateForm() {
+            const name = document.getElementById('name').value;
+            const idNumber = document.getElementById('idNumber').value;
+            const agentName = document.getElementById('agentName').value;
+            const agentIdNumber = document.getElementById('agentIdNumber').value;
+            const phone1 = document.getElementById('phone1').value;
+            const phone2 = document.getElementById('phone2').value;
+            const email1 = document.getElementById('email1').value;
+            const email2 = document.getElementById('email2').value;
+
+            if (!name || !idNumber) {
+                alert('請填入姓名和統一編號');
+                return;
+            }
+
+            // 填入申請日期
+            document.getElementById('applyDate').textContent = getROCYear();
+
+            // 填入申請人資料
+            document.getElementById('applicantName').textContent = name;
+            document.getElementById('applicantIdNumber').textContent = idNumber;
+            
+            // 填入法定代理人資料
+            document.getElementById('agentNameOutput').textContent = agentName || '';
+            document.getElementById('agentIdNumberOutput').textContent = agentIdNumber || '';
+
+            // 填入通知方式
+            let notificationText = '';
+            if (phone1 || phone2) {
+                notificationText += '☑ 簡訊，';
+                if (phone1) notificationText += `國內手機號碼1：${phone1}`;
+                if (phone2) notificationText += `、手機號碼2：${phone2}`;
+                notificationText += '<br>';
+            }
+            
+            if (email1 || email2) {
+                notificationText += '☑ 電子郵件，';
+                if (email1) notificationText += `電子郵件信箱1：${email1}`;
+                if (email2) notificationText += `、電子郵件信箱2：${email2}`;
+            }
+
+            if (!notificationText) {
+                notificationText = '☐ 簡訊，國內手機號碼1：___________、手機號碼2：___________<br>☐ 電子郵件，電子郵件信箱1：_____________________________、電子郵件信箱2：_____________________________';
+            }
+
+            document.getElementById('notificationMethod').innerHTML = notificationText;
+
+            // 顯示申請書表格和條款
+            document.getElementById('formTable').style.display = 'table';
+            document.getElementById('termsSection').style.display = 'block';
+        }
+
+        function printForm() {
+            const formTable = document.getElementById('formTable');
+            const termsSection = document.getElementById('termsSection');
+            
+            if (formTable.style.display === 'none') {
+                alert('請先生成申請書後再列印');
+                return;
+            }
+            
+            window.print();
+        }
+
+        // 頁面載入時設定預設值
+        window.onload = function() {
+            // 可以在這裡設定一些預設值
+        };
+    </script>
+</body>
+</html>
